@@ -12,7 +12,7 @@ export default function TodoList() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/tasks');
+        const response = await fetch('https://todo-backend-6pfq.onrender.com/tasks');
         const tasks = await response.json();
         setTodos(tasks);
       } catch (error) {
@@ -31,7 +31,7 @@ export default function TodoList() {
   const handleAddTodo = async () => {
     if (inputValue.trim() !== '') {
       try {
-        const res = await fetch("http://localhost:3000/api/tasks", {
+        const res = await fetch("https://todo-backend-6pfq.onrender.com/tasks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: inputValue }),
@@ -54,7 +54,7 @@ export default function TodoList() {
   // --- Handlers for toggling completion and deleting ---
   const handleToggleComplete = async (id, completed) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+      const res = await fetch(`https://todo-backend-6pfq.onrender.com/tasks/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ completed: !completed }),
@@ -68,7 +68,7 @@ export default function TodoList() {
 
   const handleDeleteTodo = async (id) => {
     try {
-      await fetch(`http://localhost:3000/api/tasks/${id}`, {
+      await fetch(`https://todo-backend-6pfq.onrender.com/tasks/${id}`, {
         method: "DELETE",
       });
       setTodos(todos.filter(todo => todo._id !== id));
@@ -90,7 +90,7 @@ export default function TodoList() {
   const handleEditSave = async (id) => {
     if (editText.trim() !== '') {
       try {
-        const res = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+        const res = await fetch(`https://todo-backend-6pfq.onrender.com/tasks/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: editText }),
