@@ -7,14 +7,15 @@ export default function TodoList() {
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
 
-  // Fetch tasks from backend on mount (with wake-up ping)
+  const API_BASE = 'https://todo-backend-6pfq.onrender.com/api/tasks';
+
+  // Fetch tasks from backend on mount
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        // Ping backend to wake up if asleep
+        // Wake up Render server
         await fetch('https://todo-backend-6pfq.onrender.com');
-
-        const response = await fetch('https://todo-backend-6pfq.onrender.com/tasks');
+        const response = await fetch(API_BASE);
         const tasks = await response.json();
         setTodos(tasks);
       } catch (error) {
@@ -29,9 +30,9 @@ export default function TodoList() {
   const handleAddTodo = async () => {
     if (inputValue.trim() !== '') {
       try {
-        const res = await fetch("https://todo-backend-6pfq.onrender.com/tasks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const res = await fetch(API_BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: inputValue }),
         });
         const newTodo = await res.json();
@@ -43,19 +44,19 @@ export default function TodoList() {
     }
   };
 
-  // Handle input keypress (Enter to add)
+  // Handle input keypress
   const handleInputKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleAddTodo();
     }
   };
 
-  // Toggle task completion
+  // Toggle complete
   const handleToggleComplete = async (id, completed) => {
     try {
-      const res = await fetch(`https://todo-backend-6pfq.onrender.com/tasks/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch(`${API_BASE}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ completed: !completed }),
       });
       const updatedTask = await res.json();
@@ -68,9 +69,7 @@ export default function TodoList() {
   // Delete task
   const handleDeleteTodo = async (id) => {
     try {
-      await fetch(`https://todo-backend-6pfq.onrender.com/tasks/${id}`, {
-        method: "DELETE",
-      });
+      await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
       setTodos(todos.filter(todo => todo._id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -87,9 +86,9 @@ export default function TodoList() {
   const handleEditSave = async (id) => {
     if (editText.trim() !== '') {
       try {
-        const res = await fetch(`https://todo-backend-6pfq.onrender.com/tasks/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
+        const res = await fetch(`${API_BASE}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: editText }),
         });
         const updatedTask = await res.json();
@@ -102,13 +101,11 @@ export default function TodoList() {
     }
   };
 
-  // Cancel editing
   const handleEditCancel = () => {
     setEditingId(null);
     setEditText('');
   };
 
-  // Handle key press during editing
   const handleEditKeyDown = (event, id) => {
     if (event.key === 'Enter') {
       handleEditSave(id);
@@ -121,7 +118,6 @@ export default function TodoList() {
     <div className="todo-list-container">
       <h1>My To-Do List</h1>
 
-      {/* Add new task */}
       <div className="todo-input-container">
         <input
           type="text"
@@ -133,7 +129,6 @@ export default function TodoList() {
         <button onClick={handleAddTodo}>Add</button>
       </div>
 
-      {/* Task list */}
       <ul className="todo-list">
         {todos.length === 0 ? (
           <p className="empty-list-message">Your todo list is empty!</p>
